@@ -64,7 +64,7 @@ func getAccessTokenFromTmp() string{
 	// ファイルの読み込み
 	contents,err := ioutil.ReadFile(CODIC_TOKEN_PATH) // ReadFileの戻り値は []byte
 	if err != nil {
-		println("たぶんtoken setしてないので-token=XXXみたいにCodicでログインしてやってください")
+		log.Fatal("AccessTokenがないかExpireしてますよ => ここから取得再して-token=XXXでsetしてください https://codic.jp/my/api_status")
 		os.Exit(0)
 	}
 	return string(contents)
