@@ -1,12 +1,18 @@
 # Codic_cli
 [Codic](https://codic.jp/)のAPIをCLIから叩くツールです。
 
-## install
-落としてきてgo installすればいいと思います
+## Codicとは？
+いい感じに日本語から関数名とか変数名を作ってくれるサービスです。
+https://codic.jp/
+APIも公開してます。
+https://codic.jp/docs/api
 
-## how to use
+## install
+落としてきてgo installすればいいと思います。
+
+## 使い方
 [ここ](https://codic.jp/my/api_status)から自分のAccessTokenを落としてきて使ってください
-もうちょっとで完成します。
+AccessTokenがコピペできないので泣きの目Copyでお願いします。
 
 ```
 $ codic_tool -token=XXXXXXXXXXX 東京で狩りをする                                                
@@ -18,11 +24,11 @@ $ codic_tool -token=XXXXXXXXXXX 東京で狩りをする
 またcasingも指定できます
 
 ```
-$ codec_cli --help
+$ codic_tool --help
   -casing string
     	[camel, pascal, lower_underscore, upper_underscore, hyphen] (default "camel")
   -token string
     	initial setting token. (default "default")
-$ codec_cli --casing=lower_underscore こんにちは世界
+$ codic_tool --casing=lower_underscore こんにちは世界
 [ こんにちは世界 ]=> HELLO_WORLD
 ```
