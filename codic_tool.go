@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"flag"
 	"log"
 	"os"
-
 	"strings"
 )
 
@@ -90,16 +90,14 @@ func getCasingFromTmp() string{
 
 func getCodic(query string, casing string){
 	// build url
-	url := "https://api.codic.jp/v1/engine/translate.json?text="
-	url += urlencode(query)
+	requestUrl := "https://api.codic.jp/v1/engine/translate.json?text="
+	requestUrl += url.QueryEscape(query)
 	// CLI引数の関係で_をwhite spaceに変換
-	url += "&casing="+urlencode(strings.Replace(casing,"_"," ",-1))
-	//println(url)
-	//os.Exit(0)
+	requestUrl += "&casing="+url.QueryEscape(strings.Replace(casing,"_"," ",-1))
 
 	client := &http.Client{}
 
-	req, err := http.NewRequest("GET", url, nil)
+	req, err := http.NewRequest("GET", requestUrl, nil)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -130,34 +128,4 @@ func getCodic(query string, casing string){
 		fmt.Println("これはだめや")
 		print()
 	}
-}
-
-// 参考
-// http://qiita.com/hnaohiro/items/80e9112c78f2975f9699
-func urlencode(s string) (result string){
-	for _, c := range(s) {
-		if c <= 0x7f { // single byte
-			result += fmt.Sprintf("%%%X", c)
-		} else if c > 0x1fffff {// quaternary byte
-			result += fmt.Sprintf("%%%X%%%X%%%X%%%X",
-				0xf0 + ((c & 0x1c0000) >> 18),
-				0x80 + ((c & 0x3f000) >> 12),
-				0x80 + ((c & 0xfc0) >> 6),
-				0x80 + (c & 0x3f),
-			)
-		} else if c > 0x7ff { // triple byte
-			result += fmt.Sprintf("%%%X%%%X%%%X",
-				0xe0 + ((c & 0xf000) >> 12),
-				0x80 + ((c & 0xfc0) >> 6),
-				0x80 + (c & 0x3f),
-			)
-		} else { // double byte
-			result += fmt.Sprintf("%%%X%%%X",
-				0xc0 + ((c & 0x7c0) >> 6),
-				0x80 + (c & 0x3f),
-			)
-		}
-	}
-
-	return result
 }
