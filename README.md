@@ -14,3 +14,15 @@ $ codic_tool -token=XXXXXXXXXXX 東京で狩りをする
 ```
 
 -token=のオプションは一回入れればいいです。
+
+またcasingも指定できます
+
+```
+$ codec_cli --help
+  -casing string
+    	[camel, pascal, lower_underscore, upper_underscore, hyphen] (default "camel")
+  -token string
+    	initial setting token. (default "default")
+$ codec_cli --casing=lower_underscore こんにちは世界
+[ こんにちは世界 ]=> HELLO_WORLD
+```
