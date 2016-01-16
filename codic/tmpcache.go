@@ -2,7 +2,7 @@ package codic_tool
 
 import (
 	"io/ioutil"
-	"log"
+	//"log"
 	"os"
 )
 
@@ -11,12 +11,11 @@ func setToTmp(cache_string string, filename string){
 	ioutil.WriteFile(filename, content, os.ModePerm)
 }
 
-func getFromTmp(filename string, noExistFileMessage string) string{
+func getFromTmp(filename string) string{
 	// ファイルの読み込み
 	contents,err := ioutil.ReadFile(filename)
 	if err != nil {
-		log.Fatal(noExistFileMessage)
-		os.Exit(0)
+		return ""
 	}
 	return string(contents)
 }

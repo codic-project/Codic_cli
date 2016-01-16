@@ -8,13 +8,12 @@ import (
 	"net/url"
 	"flag"
 	"log"
-	"os"
 	"strings"
 )
 
 const CODIC_TOKEN_PATH   = "/tmp/token_codic"
 const CODIC_CASING_PATH  = "/tmp/casing_codic"
-const DEFALUT_TOKEN_STR  = "default"
+const DEFALUT_TOKEN_STR  = "XXXXX"
 const DEFALUT_CASING_STR = "camel"
 
 type Codic struct {
@@ -27,30 +26,35 @@ type Codic struct {
 func (this *Codic) Run() {
 	this.argumentConfiguration()
 	result := this.requestCodicApi()
-	fmt.Println("[％s] => %s", this.query, result)
+	print(fmt.Sprintf("[%v] => %v\n", this.query, result))
 }
 
 
 func (this *Codic) argumentConfiguration(){
 	// token, query
-	token  := flag.String("token", DEFALUT_TOKEN_STR, "initial setting token.")
-	casing := flag.String("casing",DEFALUT_CASING_STR,"[camel, pascal, lower_underscore, upper_underscore, hyphen]")
+	token  := flag.String("token", DEFALUT_TOKEN_STR, "Need to set AccessToken.")
+	casing := flag.String("casing",DEFALUT_CASING_STR,"Optional set casing. [camel, pascal, lower_underscore, upper_underscore, hyphen]")
+	flag.Parse()
 	if(len(flag.Args()) > 0){
 		this.query = flag.Args()[0]
+	}else{
+		log.Fatal("Please set argument word.")
 	}
-	flag.Parse()
 
 	// token
 	if *token != DEFALUT_TOKEN_STR{
 		setToTmp(*token, CODIC_TOKEN_PATH)
 	}
-	this.token = getFromTmp(CODIC_TOKEN_PATH, "!Unset Token!")
+	this.token = getFromTmp(CODIC_TOKEN_PATH)
+	if this.token == ""{
+		log.Fatal("!Unset Token!")
+	}
 
 	// casing
-	if *casing != DEFALUT_CASING_STR{
+	if *casing != DEFALUT_CASING_STR || getFromTmp(CODIC_CASING_PATH) == ""{
 		setToTmp(*casing, CODIC_CASING_PATH)
 	}
-	this.casing = getFromTmp(CODIC_CASING_PATH, "")
+	this.casing = getFromTmp(CODIC_CASING_PATH)
 }
 
 func (this *Codic) requestCodicApi()(result string){
@@ -75,7 +79,6 @@ func (this *Codic) requestCodicApi()(result string){
 
 	if r.StatusCode == http.StatusUnauthorized {
 		log.Fatal("Maybe AccessToken is expired. Please reset.")
-		os.Exit(0)
 	}
 
 	defer r.Body.Close()
@@ -87,8 +90,9 @@ func (this *Codic) requestCodicApi()(result string){
 	if datas[0].Successful{
 		return datas[0].Translated_text
 	}else{
+		println(string(body))
 		log.Fatal("Request Failed")
-		os.Exit(0)
 	}
 	return ""
 }
+
